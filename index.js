@@ -1,3 +1,3 @@
-import { start } from './src/render.js';
+import { start } from './src/game.js';
 
 start();

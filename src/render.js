@@ -1,9 +1,7 @@
 'use strict';
 
 import constants from './constants.js';
-import stateModel from './model.js';
 import { fromEvent } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
@@ -17,23 +15,18 @@ const drawRow = (nr, size) => {
 }
 
 const drawField = () => {
-  ctx.fillStyle = 'white';
+  ctx.clearRect(0, 0, 8 * size, 8 * size);
+  ctx.fillStyle = constants.WHITE_COLOUR;
   ctx.fillRect(0, 0, 8 * size, 8 * size);
-  ctx.fillStyle = 'black';
+  ctx.fillStyle = constants.BORDER_COLOUR;
   ctx.strokeRect(0, 0, 8 * size, 8 * size);
-  ctx.fillStyle = 'grey';
+  ctx.fillStyle = constants.BLACK_COLOUR;
   new Array(8).fill().forEach((val, idx) => drawRow(idx, size))
 }
 
 const drawPieces = model => {
-  ctx.fillStyle = 'black';
-  ctx.font = "25px Arial";
-  model.board.forEach((row, rowIdx) => {
-    row.forEach((piece, idx) => {
-      if (!piece) return;
-      ctx.fillText(piece.symbol, 0.3 * size + idx * size, 0.7 * size + rowIdx * size);
-    })
-  });
+  ctx.font = constants.FONT;
+  model.pieces.forEach(piece => ctx.drawImage(piece.img, piece.x * size, piece.y * size, size, size));
 }
 
 const render = model => {
@@ -41,18 +34,12 @@ const render = model => {
   drawPieces(model);
 }
 
-const setUpEvents = () => {
-  fromEvent(canvas, 'click').pipe(
-    map(event => ([Math.floor(event.clientX / size), Math.floor(event.clientY / size)]))
-  ).subscribe(val => console.log(val));
-}
+const getMouse$ = () => {
+  return fromEvent(canvas, 'click')}
 
-const start = () => {
-  stateModel.subscribe(render);
-  setUpEvents();
-}
 
 export {
-  start
+  render,
+  getMouse$
 }
 
