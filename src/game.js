@@ -1,19 +1,20 @@
 import { render, getMouse$ } from './render.js';
 import { getStartingModel$ } from './starting-model.js'
 import { findPieceByCoordinates } from './util';
-import { scan, map, mergeMap } from 'rxjs/operators';
+import { scan, map, mergeMap, tap } from 'rxjs/operators';
 import constants from './constants.js';
 
 const getSquare = (y, x) => ([Math.floor(y / constants.FIELD_SIZE), Math.floor(x / constants.FIELD_SIZE)]);
 
-const getModel$ = startingModel => getMouse$().pipe(
+const getAction$ = startingModel => getMouse$().pipe(
     map(event => getSquare(event.clientY, event.clientX)),
     scan(performAction, startingModel)
 );
 
 export const start = () => {
     getStartingModel$().pipe(
-        mergeMap(getModel$)
+        tap(render),
+        mergeMap(getAction$)
     ).subscribe(render);
 }
 
