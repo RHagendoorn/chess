@@ -25,7 +25,6 @@ const drawField = () => {
 }
 
 const drawPieces = model => {
-  ctx.font = constants.FONT;
   model.pieces.forEach(piece => ctx.drawImage(piece.img, piece.x * size, piece.y * size, size, size));
 }
 
